@@ -11,8 +11,8 @@ let package = Package(
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
-            name: "hummingbird-signedcookies",
-            targets: ["hummingbird-signedcookies"]),
+            name: "HummingbirdSignedCookies",
+            targets: ["HummingbirdSignedCookies"]),
     ],
     dependencies: [
         .package(url: "https://github.com/hummingbird-project/hummingbird.git", from: "2.2.0"),
@@ -22,7 +22,7 @@ let package = Package(
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "hummingbird-signedcookies",
+            name: "HummingbirdSignedCookies",
             dependencies: [
                 .product(name: "Hummingbird", package: "hummingbird"),
                 .product(name: "JWTKit", package: "jwt-kit"),
