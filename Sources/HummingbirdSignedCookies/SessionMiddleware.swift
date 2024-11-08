@@ -17,7 +17,7 @@ public struct MySessionToken: JWTPayload {
 public protocol SessionMiddlewareContext<Content>: RequestContext where Content: JWTPayload {
     associatedtype Content
 
-    var session: JWTPayload? { get set }
+    var session: Content? { get set }
 }
 
 public struct SessionMiddleware<Context: SessionMiddlewareContext>: RouterMiddleware {
