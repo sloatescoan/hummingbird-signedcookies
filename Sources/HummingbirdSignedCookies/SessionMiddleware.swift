@@ -14,7 +14,7 @@ public struct MySessionToken: JWTPayload {
     public func verify(using algorithm: some JWTKit.JWTAlgorithm) async throws {}
 }
 
-public protocol SessionMiddlewareContext<Content>: RequestContext where Content: JWTPayload {
+public protocol SessionMiddlewareContext<Content>: RequestContext where Content: Codable & Sendable {
     associatedtype Content
 
     var session: Content? { get set }
@@ -22,17 +22,20 @@ public protocol SessionMiddlewareContext<Content>: RequestContext where Content:
 
 public struct SessionMiddleware<Context: SessionMiddlewareContext>: RouterMiddleware {
 
+    struct SessionToken: JWTPayload {
+        let data: Context.Content
+
+        public func verify(using algorithm: some JWTKit.JWTAlgorithm) async throws {}
+    }
+
     let cookieName: String
     let keyCollection = JWTKeyCollection()
-    let tokenType: any JWTPayload.Type
 
     public init(
         cookieName: String = "HBSESSION",
-        secret: String,
-        tokenType: any JWTPayload.Type
+        secret: String
     ) async  {
         self.cookieName = cookieName
-        self.tokenType = tokenType
         await keyCollection.add(hmac: HMACKey(stringLiteral: secret), digestAlgorithm: .sha256)
     }
 
@@ -44,14 +47,15 @@ public struct SessionMiddleware<Context: SessionMiddlewareContext>: RouterMiddle
         var context = context
 
         if let cookie = request.cookies[cookieName] {
-            let payload = try await keyCollection.verify(cookie.value, as: Context.Content.self)
-            context.session = payload
+            let payload = try await keyCollection.verify(cookie.value, as: SessionToken.self)
+            context.session = payload.data
         }
 
         var response = try await next(request, context)
 
         if let session = context.session {
-            let cookieValue = try await keyCollection.sign(session)
+            let tokenPayload = SessionToken(data: session)
+            let cookieValue = try await keyCollection.sign(tokenPayload)
             response.setCookie(.init(name: cookieName, value: cookieValue))
         }
 
