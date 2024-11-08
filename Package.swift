@@ -29,8 +29,8 @@ let package = Package(
             ]
         ),
         .testTarget(
-            name: "hummingbird-signedcookiesTests",
-            dependencies: ["hummingbird-signedcookies"]
+            name: "HummingbirdSignedCookiesTests",
+            dependencies: ["HummingbirdSignedCookies"]
         ),
     ]
 )
