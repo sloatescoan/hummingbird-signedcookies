@@ -2,18 +2,6 @@ import Foundation
 import Hummingbird
 import JWTKit
 
-public struct MySessionPayload: Codable, Sendable {
-    var test: String
-}
-
-public struct MySessionToken: JWTPayload {
-    public typealias Content = MySessionPayload
-
-    public var payload: MySessionPayload
-
-    public func verify(using algorithm: some JWTKit.JWTAlgorithm) async throws {}
-}
-
 public protocol SessionMiddlewareContext<Content>: RequestContext where Content: Codable & Sendable {
     associatedtype Content
 
