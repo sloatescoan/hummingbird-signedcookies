@@ -20,7 +20,7 @@ public protocol SessionMiddlewareContext<Content>: RequestContext where Content:
     var session: Content? { get set }
 }
 
-public struct SessionMiddleware<Context: SessionMiddlewareContext, Content>: RouterMiddleware where Content == Context.Content {
+public struct SessionMiddleware<Context: SessionMiddlewareContext>: RouterMiddleware {
 
     let cookieName: String
     let keyCollection = JWTKeyCollection()
@@ -44,7 +44,7 @@ public struct SessionMiddleware<Context: SessionMiddlewareContext, Content>: Rou
         var context = context
 
         if let cookie = request.cookies[cookieName] {
-            let payload = try await keyCollection.verify(cookie.value, as: Content.self)
+            let payload = try await keyCollection.verify(cookie.value, as: Context.Content.self)
             context.session = payload
         }
 
