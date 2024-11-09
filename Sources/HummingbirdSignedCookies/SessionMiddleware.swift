@@ -45,6 +45,8 @@ public struct SessionMiddleware<Context: SessionMiddlewareContext>: RouterMiddle
             let tokenPayload = SessionToken(data: session)
             let cookieValue = try await keyCollection.sign(tokenPayload)
             response.setCookie(.init(name: cookieName, value: cookieValue))
+        } else {
+            response.setCookie(.init(name: cookieName, value: "", expires: Date()))
         }
 
         return response
