@@ -17,14 +17,14 @@ public struct SessionMiddleware<Context: SessionMiddlewareContext>: RouterMiddle
     }
 
     let cookieName: String
-    let keyCollection = JWTKeyCollection()
+    let keyCollection: JWTKeyCollection
 
     public init(
         cookieName: String = "HBSESSION",
-        secret: String
-    ) async  {
+        keyCollection: JWTKeyCollection
+    )  {
         self.cookieName = cookieName
-        await keyCollection.add(hmac: HMACKey(stringLiteral: secret), digestAlgorithm: .sha256)
+        self.keyCollection = keyCollection
     }
 
     public func handle(
